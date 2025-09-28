@@ -398,22 +398,200 @@ export class ArgoAPIService {
     })
   }
 
-  // Ocean Map Data API
+  // Ocean Map Data API - Using Dummy Data
   async getOceanMapData(params: {
     region?: string
     status?: string
     float_type?: string
     has_measurements?: boolean
   } = {}): Promise<OceanMapData> {
-    const queryParams = new URLSearchParams()
-    // Only add parameters that have actual values (not empty strings or undefined)
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
-        queryParams.append(key, value.toString())
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 300))
+    
+    // Generate dummy float data
+    const dummyFloats: FloatData[] = [
+      {
+        id: 'float_001',
+        platform_number: '2900123',
+        lat: 15.5,
+        lon: 68.2,
+        status: 'Active',
+        type: 'Core',
+        manufacturer: 'SBE',
+        lastUpdate: '2024-09-29T12:00:00Z',
+        temp: 28.5,
+        salinity: 35.2,
+        depth: 2000,
+        color: '#10B981',
+        data_availability: {
+          core: true,
+          bgc: false,
+          deep: true
+        },
+        statistics: {
+          profiles: 156,
+          measurements: 4520,
+          hasData: true
+        },
+        deploymentDate: '2023-05-15T00:00:00Z',
+        trajectory: [[68.2, 15.5], [68.1, 15.6], [67.9, 15.7]]
+      },
+      {
+        id: 'float_002',
+        platform_number: '2900124',
+        lat: 12.8,
+        lon: 75.4,
+        status: 'Active',
+        type: 'BGC',
+        manufacturer: 'APEX',
+        lastUpdate: '2024-09-29T11:30:00Z',
+        temp: 26.8,
+        salinity: 34.8,
+        depth: 1500,
+        color: '#3B82F6',
+        data_availability: {
+          core: true,
+          bgc: true,
+          deep: false
+        },
+        statistics: {
+          profiles: 89,
+          measurements: 2670,
+          hasData: true
+        },
+        deploymentDate: '2023-08-22T00:00:00Z',
+        trajectory: [[75.4, 12.8], [75.3, 12.9], [75.2, 13.0]]
+      },
+      {
+        id: 'float_003',
+        platform_number: '2900125',
+        lat: 8.2,
+        lon: 73.1,
+        status: 'Inactive',
+        type: 'Core',
+        manufacturer: 'NOVA',
+        lastUpdate: '2024-09-25T08:45:00Z',
+        temp: 29.1,
+        salinity: 35.5,
+        depth: 1000,
+        color: '#F59E0B',
+        data_availability: {
+          core: true,
+          bgc: false,
+          deep: false
+        },
+        statistics: {
+          profiles: 234,
+          measurements: 6890,
+          hasData: true
+        },
+        deploymentDate: '2022-12-10T00:00:00Z',
+        trajectory: [[73.1, 8.2], [73.0, 8.3], [72.9, 8.4]]
+      },
+      {
+        id: 'float_004',
+        platform_number: '2900126',
+        lat: 20.1,
+        lon: 65.7,
+        status: 'Active',
+        type: 'Deep',
+        manufacturer: 'SBE',
+        lastUpdate: '2024-09-29T13:15:00Z',
+        temp: 24.2,
+        salinity: 36.1,
+        depth: 4000,
+        color: '#8B5CF6',
+        data_availability: {
+          core: true,
+          bgc: false,
+          deep: true
+        },
+        statistics: {
+          profiles: 67,
+          measurements: 3450,
+          hasData: true
+        },
+        deploymentDate: '2024-01-18T00:00:00Z',
+        trajectory: [[65.7, 20.1], [65.6, 20.2], [65.5, 20.3]]
+      },
+      {
+        id: 'float_005',
+        platform_number: '2900127',
+        lat: 18.9,
+        lon: 72.3,
+        status: 'Active',
+        type: 'BGC',
+        manufacturer: 'APEX',
+        lastUpdate: '2024-09-29T14:00:00Z',
+        temp: 27.3,
+        salinity: 35.0,
+        depth: 2500,
+        color: '#EF4444',
+        data_availability: {
+          core: true,
+          bgc: true,
+          deep: true
+        },
+        statistics: {
+          profiles: 123,
+          measurements: 5210,
+          hasData: true
+        },
+        deploymentDate: '2023-09-05T00:00:00Z',
+        trajectory: [[72.3, 18.9], [72.2, 19.0], [72.1, 19.1]]
       }
-    })
+    ]
 
-    return this.request(`/api/client/visualization/ocean-map?${queryParams}`)
+    // Apply basic filtering
+    let filteredFloats = dummyFloats
+    
+    if (params.region) {
+      // Simple region filtering (Arabian Sea vs Bay of Bengal)
+      if (params.region.toLowerCase().includes('arabian')) {
+        filteredFloats = filteredFloats.filter(f => f.lon < 70)
+      } else if (params.region.toLowerCase().includes('bengal')) {
+        filteredFloats = filteredFloats.filter(f => f.lon > 70)
+      }
+    }
+    
+    if (params.status) {
+      filteredFloats = filteredFloats.filter(f => f.status.toLowerCase() === params.status!.toLowerCase())
+    }
+    
+    if (params.float_type) {
+      filteredFloats = filteredFloats.filter(f => f.type.toLowerCase() === params.float_type!.toLowerCase())
+    }
+    
+    if (params.has_measurements !== undefined) {
+      filteredFloats = filteredFloats.filter(f => f.statistics.hasData === params.has_measurements)
+    }
+
+    return {
+      floats: filteredFloats,
+      summary: {
+        total_floats: 5,
+        active_floats: 4,
+        with_measurements: 5,
+        coverage_percentage: 78.5,
+        status_breakdown: {
+          'Active': 4,
+          'Inactive': 1,
+          'Deployed': 0,
+          'Failed': 0
+        },
+        type_breakdown: {
+          'Core': 2,
+          'BGC': 2,
+          'Deep': 1
+        },
+        regions: {
+          'Arabian Sea': 2,
+          'Bay of Bengal': 2,
+          'Indian Ocean': 1
+        }
+      },
+      lastUpdated: '2024-09-29T14:30:00Z'
+    }
   }
 
   // Dashboard Metrics API
@@ -518,7 +696,7 @@ export class ArgoAPIService {
     return this.request(`/api/client/floats/${platformNumber}/detailed`)
   }
 
-  // Generic search/filter API
+  // Generic search/filter API - Using Dummy Data
   async searchFloats(params: {
     query?: string
     region?: string
@@ -527,15 +705,36 @@ export class ArgoAPIService {
     has_data?: boolean
     limit?: number
   } = {}): Promise<FloatData[]> {
-    const queryParams = new URLSearchParams()
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined) {
-        queryParams.append(key, value.toString())
-      }
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 200))
+    
+    // Get ocean map data and extract floats
+    const oceanMapData = await this.getOceanMapData({
+      region: params.region,
+      status: params.status,
+      float_type: params.float_type,
+      has_measurements: params.has_data
     })
-
-    const response = await this.request<OceanMapData>(`/api/client/visualization/ocean-map?${queryParams}`)
-    return response.floats
+    
+    let filteredFloats = oceanMapData.floats
+    
+    // Apply text query filtering
+    if (params.query) {
+      const query = params.query.toLowerCase()
+      filteredFloats = filteredFloats.filter(f => 
+        f.platform_number.toLowerCase().includes(query) ||
+        f.manufacturer?.toLowerCase().includes(query) ||
+        f.type.toLowerCase().includes(query) ||
+        f.status.toLowerCase().includes(query)
+      )
+    }
+    
+    // Apply limit
+    if (params.limit) {
+      filteredFloats = filteredFloats.slice(0, params.limit)
+    }
+    
+    return filteredFloats
   }
 
   // Health check
