@@ -1,43 +1,34 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MapContainer, TileLayer, Marker, Popup, CircleMarker } from 'react-leaflet'
+import { MapContainer, TileLayer, Popup, CircleMarker } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { 
   Send, 
-  Bot, 
   User, 
   Loader, 
   Sparkles, 
   BarChart3,
   Mic,
   MicOff,
-  Settings,
   Download,
-  Share2,
   Star,
   Clock,
   MessageSquare,
   Brain,
   Database,
   Map,
-  FileText,
   Copy,
   ThumbsUp,
   ThumbsDown,
   Eye,
-  TrendingUp,
   Activity,
   CheckCircle,
   AlertCircle,
   Code,
-  Terminal,
   Layers,
-  Zap,
   HelpCircle,
   BookOpen,
-  ToggleLeft,
-  ToggleRight,
   Globe,
   RefreshCw
 } from 'lucide-react'
@@ -52,44 +43,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-shadow.png',
 })
 
-interface RAGMessage {
-  id: string
-  type: 'user' | 'assistant'
-  message: string
-  timestamp: Date
-  result?: any
-  metadata?: {
-    confidence?: number
-    sources?: Array<{
-      id: string
-      type: string
-      relevance_score: number
-      metadata: any
-    }>
-    retrievedDocs?: Array<{
-      id: string
-      type: string
-      content: string
-      metadata: any
-    }>
-    generatedSQL?: string
-    data?: any[]
-    columns?: string[]
-    rowCount?: number
-    executionTimeMs?: number
-    followUpQuestions?: string[]
-  }
-}
-
-interface ConversationTemplate {
-  id: string
-  name: string
-  description: string
-  category: string
-  startingQuery: string
-  icon: React.ReactNode
-}
-
 const RAGChat: React.FC = () => {
   const { messages, loading, error, sendMessage, clearMessages } = useRAGChat()
   const { mapData, loading: mapLoading, refetch: refetchMapData } = useOceanMap({})
@@ -97,43 +50,7 @@ const RAGChat: React.FC = () => {
   const [isVoiceMode, setIsVoiceMode] = useState(false)
   const [activeTab, setActiveTab] = useState<'chat' | 'sources' | 'history' | 'settings'>('chat')
   const [rightPanelView, setRightPanelView] = useState<'map' | 'chart'>('map')
-  const [expandedVisualization, setExpandedVisualization] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-
-  const conversationTemplates: ConversationTemplate[] = [
-    {
-      id: 'ocean-analysis',
-      name: 'Ocean Analysis',
-      description: 'Analyze ocean temperature and salinity patterns',
-      category: 'Analysis',
-      startingQuery: 'What are the temperature patterns in the Arabian Sea and how do they compare to the Bay of Bengal?',
-      icon: <TrendingUp className="w-5 h-5" />
-    },
-    {
-      id: 'float-tracking',
-      name: 'Float Monitoring',
-      description: 'Track ARGO float status and locations',
-      category: 'Monitoring',
-      startingQuery: 'Show me the distribution of active ARGO floats across different ocean regions',
-      icon: <Map className="w-5 h-5" />
-    },
-    {
-      id: 'data-exploration',
-      name: 'Data Exploration',
-      description: 'Explore oceanographic measurements',
-      category: 'Research',
-      startingQuery: 'What types of measurements are available and what depth ranges do they cover?',
-      icon: <Database className="w-5 h-5" />
-    },
-    {
-      id: 'scientific-insights',
-      name: 'Scientific Insights',
-      description: 'Get oceanographic scientific explanations',
-      category: 'Science',
-      startingQuery: 'Explain the relationship between ocean depth, temperature, and salinity in the Indian Ocean',
-      icon: <Brain className="w-5 h-5" />
-    }
-  ]
 
   const suggestedQueries = [
     "What are the temperature anomalies in the Arabian Sea this year?",
@@ -157,11 +74,6 @@ const RAGChat: React.FC = () => {
     
     await sendMessage(inputValue)
     setInputValue('')
-  }
-
-  const handleTemplateSelect = (template: ConversationTemplate) => {
-    setInputValue(template.startingQuery)
-    setActiveTab('chat')
   }
 
   const copyToClipboard = (text: string) => {
@@ -771,7 +683,7 @@ const RAGChat: React.FC = () => {
                   {/* Render floats from current query results with priority */}
                   {messages.length > 0 && (() => {
                     const lastMessage = messages[messages.length - 1]
-                    if (lastMessage?.type === 'assistant' && hasGeographicData(lastMessage.result?.data)) {
+                    if (lastMessage?.type === 'assistant' && lastMessage.result?.data && hasGeographicData(lastMessage.result.data)) {
                       return lastMessage.result.data.map((row: any, index: number) => {
                         const lat = row.latitude || row.deployment_latitude || row.lat
                         const lng = row.longitude || row.deployment_longitude || row.lon
@@ -809,14 +721,14 @@ const RAGChat: React.FC = () => {
                   })()}
                   
                   {/* Render all other floats */}
-                  {mapData?.floats?.map((float, index) => (
+                  {mapData?.floats?.map((float) => (
                     <CircleMarker
                       key={`float-${float.id}`}
                       center={[float.lat, float.lon]}
                       radius={6}
                       pathOptions={{
-                        color: float.has_bgc_data ? '#10b981' : float.status === 'ACTIVE' ? '#3b82f6' : '#6b7280',
-                        fillColor: float.has_bgc_data ? '#10b981' : float.status === 'ACTIVE' ? '#3b82f6' : '#6b7280',
+                        color: float.status === 'ACTIVE' ? '#3b82f6' : '#6b7280',
+                        fillColor: float.status === 'ACTIVE' ? '#3b82f6' : '#6b7280',
                         fillOpacity: 0.6,
                         weight: 1
                       }}
@@ -825,10 +737,7 @@ const RAGChat: React.FC = () => {
                         <div className="text-xs">
                           <div className="font-bold mb-1">{float.platform_number}</div>
                           <div><strong>Status:</strong> {float.status}</div>
-                          <div><strong>Type:</strong> {float.float_type}</div>
                           <div><strong>Location:</strong> {float.lat.toFixed(2)}°, {float.lon.toFixed(2)}°</div>
-                          <div><strong>Profiles:</strong> {float.profile_count}</div>
-                          {float.has_bgc_data && <div className="text-green-600"><strong>BGC Data Available</strong></div>}
                         </div>
                       </Popup>
                     </CircleMarker>
@@ -844,7 +753,7 @@ const RAGChat: React.FC = () => {
           <div className="flex-1 glass-morphism rounded-xl border border-ocean-700/30 p-4">
             {messages.length > 0 ? (() => {
               const lastMessage = messages[messages.length - 1]
-              if (lastMessage?.type === 'assistant' && shouldShowVisualization(lastMessage.result)) {
+              if (lastMessage?.type === 'assistant' && lastMessage.result?.data && shouldShowVisualization(lastMessage.result)) {
                 const chartData = prepareChartData(lastMessage.result.data, lastMessage.result.columns || Object.keys(lastMessage.result.data[0] || {}))
                 if (chartData) {
                   return (
@@ -853,12 +762,12 @@ const RAGChat: React.FC = () => {
                         <h4 className="text-lg font-semibold text-white">Query Results</h4>
                         <div className="flex items-center space-x-2 text-sm text-ocean-300">
                           <Activity className="w-4 h-4" />
-                          <span>{lastMessage.result.rowCount || 0} data points</span>
+                          <span>{lastMessage.result?.rowCount || 0} data points</span>
                         </div>
                       </div>
                       <div className="h-80">
                         <InteractiveChart
-                          type={getChartType(lastMessage.result.data, lastMessage.result.columns || Object.keys(lastMessage.result.data[0] || {}))}
+                          type={getChartType(lastMessage.result.data, lastMessage.result.columns || Object.keys(lastMessage.result.data[0] || {})) as any}
                           data={chartData}
                           title=""
                           height={300}
