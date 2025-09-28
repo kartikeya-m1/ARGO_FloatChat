@@ -642,27 +642,27 @@ const RAGChat: React.FC = () => {
   return (
     <div className="h-full flex">
       {/* Left Side - Chat */}
-      <div className="w-1/2 flex flex-col space-y-6 pr-4">
-        {/* Enhanced Header */}
-        <div className="glass-morphism p-6 rounded-xl border border-ocean-700/30">
+      <div className="w-[30%] flex flex-col space-y-3 pr-3">
+        {/* Compact Header */}
+        <div className="glass-morphism p-3 rounded-lg border border-ocean-700/30">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
-                <Brain className="w-6 h-6 text-white" />
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
+                <Brain className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-semibold text-white">RAG Ocean Assistant</h2>
-                <p className="text-sm text-ocean-300">Powered by retrieval-augmented generation and ocean science knowledge</p>
+                <h2 className="text-lg font-semibold text-white">RAG Ocean Assistant</h2>
+                <p className="text-xs text-ocean-300">Powered by retrieval-augmented generation and ocean science knowledge</p>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-2 text-purple-400">
-                <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium">RAG Online</span>
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1 text-purple-400">
+                <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse"></div>
+                <span className="text-xs font-medium">RAG Online</span>
               </div>
               <button
                 onClick={clearMessages}
-                className="px-3 py-2 bg-deep-700/50 text-ocean-300 hover:text-white hover:bg-deep-600/50 rounded-lg transition-colors text-sm"
+                className="px-2 py-1 bg-deep-700/50 text-ocean-300 hover:text-white hover:bg-deep-600/50 rounded transition-colors text-xs"
               >
                 Clear Chat
               </button>
@@ -703,43 +703,43 @@ const RAGChat: React.FC = () => {
       </div>
 
       {/* Right Side - Map/Chart Panel */}
-      <div className="w-1/2 flex flex-col space-y-4">
-        {/* Right Panel Header with Toggle */}
-        <div className="glass-morphism p-4 rounded-xl border border-ocean-700/30">
+      <div className="w-[70%] flex flex-col space-y-2">
+        {/* Compact Panel Header with Toggle */}
+        <div className="glass-morphism p-2 rounded-lg border border-ocean-700/30">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Globe className="w-5 h-5 text-blue-400" />
-              <h3 className="text-lg font-semibold text-white">Visualization Panel</h3>
-            </div>
             <div className="flex items-center space-x-2">
+              <Globe className="w-4 h-4 text-blue-400" />
+              <h3 className="text-sm font-semibold text-white">Visualization Panel</h3>
+            </div>
+            <div className="flex items-center space-x-1">
               <button
                 onClick={() => setRightPanelView('map')}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all ${
+                className={`flex items-center space-x-1 px-2 py-1 rounded transition-all ${
                   rightPanelView === 'map' 
                     ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' 
                     : 'bg-deep-700/50 text-ocean-300 hover:text-white'
                 }`}
               >
-                <Map className="w-4 h-4" />
-                <span className="text-sm">Map</span>
+                <Map className="w-3 h-3" />
+                <span className="text-xs">Map</span>
               </button>
               <button
                 onClick={() => setRightPanelView('chart')}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all ${
+                className={`flex items-center space-x-1 px-2 py-1 rounded transition-all ${
                   rightPanelView === 'chart' 
                     ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
                     : 'bg-deep-700/50 text-ocean-300 hover:text-white'
                 }`}
               >
-                <BarChart3 className="w-4 h-4" />
-                <span className="text-sm">Chart</span>
+                <BarChart3 className="w-3 h-3" />
+                <span className="text-xs">Chart</span>
               </button>
               <button
                 onClick={refetchMapData}
-                className="p-2 bg-deep-700/50 text-ocean-300 hover:text-white rounded-lg transition-colors"
+                className="p-1 bg-deep-700/50 text-ocean-300 hover:text-white rounded transition-colors"
                 disabled={mapLoading}
               >
-                <RefreshCw className={`w-4 h-4 ${mapLoading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-3 h-3 ${mapLoading ? 'animate-spin' : ''}`} />
               </button>
             </div>
           </div>

@@ -863,9 +863,9 @@ const EnhancedAIChat: React.FC = () => {
   }
 
   return (
-    <div className="h-full overflow-hidden grid grid-cols-1 xl:grid-cols-2 gap-6 bg-gradient-to-br from-[#1a1a1a] via-[#1e1e1e] to-[#0f0f0f] p-4">
-      {/* Left: Chat Panel */}
-      <div className="h-full min-h-0 flex flex-col space-y-4">
+    <div className="h-full overflow-hidden grid grid-cols-1 xl:grid-cols-5 gap-6 bg-gradient-to-br from-[#1a1a1a] via-[#1e1e1e] to-[#0f0f0f] p-4">
+      {/* Left: Chat Panel - 40% width (2/5) */}
+      <div className="h-full min-h-0 flex flex-col space-y-4 xl:col-span-2">
         {/* Header */}
         <div className="bg-gradient-to-r from-[#1a1a1a]/90 to-[#2a2a2a]/90 backdrop-blur-xl p-5 rounded-2xl border border-gray-700/30 shadow-2xl">
           <div className="flex items-center justify-between">
@@ -903,8 +903,8 @@ const EnhancedAIChat: React.FC = () => {
         </div>
       </div>
 
-      {/* Right: Map Panel */}
-      <div className="h-full min-h-0 flex flex-col space-y-4">
+      {/* Right: Map Panel - 60% width (3/5) */}
+      <div className="h-full min-h-0 flex flex-col space-y-4 xl:col-span-3">
         <div className="bg-gradient-to-r from-[#1a1a1a]/95 to-[#2a2a2a]/90 backdrop-blur-xl p-5 rounded-2xl border border-gray-600/30 shadow-2xl flex items-center justify-between">
           <div className="text-gray-100 font-bold text-lg">Spatial View</div>
           <div className="flex items-center space-x-2">
